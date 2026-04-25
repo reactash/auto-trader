@@ -15,7 +15,7 @@ from engine.trader import AlpacaTrader
 from strategy.intraday import ORBVWAPStrategy
 from utils.logger import logger
 
-ET = pytz.timezone("US/Eastern")
+ET = pytz.timezone("America/New_York")
 
 # Global state
 _trader: AlpacaTrader | None = None

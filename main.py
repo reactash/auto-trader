@@ -19,12 +19,12 @@ from utils.logger import logger
 
 def create_scheduler() -> BackgroundScheduler:
     """Create and configure the APScheduler with all trading jobs."""
-    scheduler = BackgroundScheduler(timezone="US/Eastern")
+    scheduler = BackgroundScheduler(timezone="America/New_York")
 
     # Pre-market: 8:00 AM ET, Mon-Fri
     scheduler.add_job(
         pre_market_job,
-        CronTrigger(hour=8, minute=0, day_of_week="mon-fri", timezone="US/Eastern"),
+        CronTrigger(hour=8, minute=0, day_of_week="mon-fri", timezone="America/New_York"),
         id="pre_market",
         name="Pre-Market Scan",
         misfire_grace_time=300,
@@ -33,7 +33,7 @@ def create_scheduler() -> BackgroundScheduler:
     # Market open: 9:45 AM ET (after 15-min ORB period), Mon-Fri
     scheduler.add_job(
         market_open_job,
-        CronTrigger(hour=9, minute=45, day_of_week="mon-fri", timezone="US/Eastern"),
+        CronTrigger(hour=9, minute=45, day_of_week="mon-fri", timezone="America/New_York"),
         id="market_open",
         name="Market Open - Record ORB",
         misfire_grace_time=300,
@@ -46,7 +46,7 @@ def create_scheduler() -> BackgroundScheduler:
             minute=f"*/{settings.SCAN_INTERVAL_MINUTES}",
             hour="9-15",
             day_of_week="mon-fri",
-            timezone="US/Eastern",
+            timezone="America/New_York",
         ),
         id="trading_loop",
         name="Trading Loop",
@@ -56,7 +56,7 @@ def create_scheduler() -> BackgroundScheduler:
     # Market close: 3:45 PM ET, Mon-Fri
     scheduler.add_job(
         market_close_job,
-        CronTrigger(hour=15, minute=45, day_of_week="mon-fri", timezone="US/Eastern"),
+        CronTrigger(hour=15, minute=45, day_of_week="mon-fri", timezone="America/New_York"),
         id="market_close",
         name="Market Close - Square Off",
         misfire_grace_time=300,
@@ -65,7 +65,7 @@ def create_scheduler() -> BackgroundScheduler:
     # Daily report: 4:00 PM ET, Mon-Fri
     scheduler.add_job(
         daily_report_job,
-        CronTrigger(hour=16, minute=0, day_of_week="mon-fri", timezone="US/Eastern"),
+        CronTrigger(hour=16, minute=0, day_of_week="mon-fri", timezone="America/New_York"),
         id="daily_report",
         name="Daily P&L Report",
         misfire_grace_time=600,

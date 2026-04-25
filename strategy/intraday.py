@@ -18,7 +18,7 @@ from strategy.risk_manager import (
 )
 from utils.logger import logger
 
-ET = pytz.timezone("US/Eastern")
+ET = pytz.timezone("America/New_York")
 
 
 class ORBVWAPStrategy:
