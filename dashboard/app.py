@@ -1,3 +1,4 @@
+import threading
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -27,6 +28,28 @@ def get_trader():
 def init_database():
     from engine.models import init_db
     init_db()
+
+
+@st.cache_resource
+def start_bot_scheduler():
+    """Start the trading bot scheduler in a background thread (runs once)."""
+    from main import create_scheduler
+    from utils.logger import logger
+
+    def _run():
+        try:
+            trader = get_trader()
+            account = trader.get_account()
+            logger.info(f"Bot starting | Balance: ${account['portfolio_value']:,.2f}")
+            scheduler = create_scheduler()
+            scheduler.start()
+            logger.info("Bot scheduler running in background")
+        except Exception as e:
+            logger.error(f"Bot scheduler failed to start: {e}")
+
+    thread = threading.Thread(target=_run, daemon=True)
+    thread.start()
+    return True
 
 
 def load_account():
@@ -68,6 +91,7 @@ def load_news_scores():
 
 # Initialize
 init_database()
+start_bot_scheduler()
 
 # Header
 st.title("Auto-Trader Dashboard")
