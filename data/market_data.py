@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import yfinance as yf
 from alpaca.data.historical import StockHistoricalDataClient
+from alpaca.data.enums import DataFeed
 from alpaca.data.requests import StockBarsRequest, StockLatestQuoteRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
@@ -54,6 +55,7 @@ def get_historical_bars(
         timeframe=tf,
         start=start,
         end=end,
+        feed=DataFeed.IEX,
     )
 
     try:
@@ -84,6 +86,7 @@ def get_multiple_bars(
         timeframe=tf,
         start=start,
         end=datetime.now(),
+        feed=DataFeed.IEX,
     )
 
     try:
@@ -116,7 +119,7 @@ def get_multiple_bars(
 def get_latest_quote(symbol: str) -> dict | None:
     """Get the latest quote for a symbol."""
     client = _get_data_client()
-    request = StockLatestQuoteRequest(symbol_or_symbols=symbol)
+    request = StockLatestQuoteRequest(symbol_or_symbols=symbol, feed=DataFeed.IEX)
 
     try:
         quotes = client.get_stock_latest_quote(request)
