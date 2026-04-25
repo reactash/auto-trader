@@ -141,7 +141,7 @@ def get_latest_quote(symbol: str) -> dict | None:
 
 # Top 50 S&P 500 stocks by market cap — hardcoded to avoid Wikipedia scraping issues
 SP500_TOP50 = [
-    "AAPL", "MSFT", "AMZN", "NVDA", "GOOGL", "META", "TSLA", "BRK-B", "AVGO", "JPM",
+    "AAPL", "MSFT", "AMZN", "NVDA", "GOOGL", "META", "TSLA", "BRK.B", "AVGO", "JPM",
     "LLY", "UNH", "V", "XOM", "MA", "COST", "HD", "PG", "JNJ", "NFLX",
     "ABBV", "CRM", "BAC", "CVX", "MRK", "KO", "AMD", "WMT", "PEP", "ACN",
     "TMO", "LIN", "CSCO", "MCD", "ABT", "ADBE", "DHR", "WFC", "TXN", "PM",
