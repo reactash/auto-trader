@@ -1,5 +1,16 @@
+import os
+
 from pydantic_settings import BaseSettings
 from pydantic import Field
+
+# Load Streamlit Cloud secrets into environment variables if available
+try:
+    import streamlit as st
+    if hasattr(st, "secrets") and len(st.secrets) > 0:
+        for key, value in st.secrets.items():
+            os.environ.setdefault(key, str(value))
+except Exception:
+    pass
 
 
 class Settings(BaseSettings):
