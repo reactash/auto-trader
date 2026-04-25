@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from urllib.request import urlopen, Request
 
 import pandas as pd
 import yfinance as yf
@@ -140,7 +141,10 @@ def get_latest_quote(symbol: str) -> dict | None:
 def get_sp500_symbols() -> list[str]:
     """Fetch current S&P 500 symbol list from Wikipedia via pandas."""
     try:
-        table = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
+        url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+        req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        html = urlopen(req).read()
+        table = pd.read_html(html)
         df = table[0]
         symbols = df["Symbol"].str.replace(".", "-", regex=False).tolist()
         logger.info(f"Fetched {len(symbols)} S&P 500 symbols")
