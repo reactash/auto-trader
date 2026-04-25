@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from urllib.request import urlopen, Request
 
 import pandas as pd
 import yfinance as yf
@@ -138,20 +137,22 @@ def get_latest_quote(symbol: str) -> dict | None:
         return None
 
 
+
+
+# Top 50 S&P 500 stocks by market cap — hardcoded to avoid Wikipedia scraping issues
+SP500_TOP50 = [
+    "AAPL", "MSFT", "AMZN", "NVDA", "GOOGL", "META", "TSLA", "BRK-B", "AVGO", "JPM",
+    "LLY", "UNH", "V", "XOM", "MA", "COST", "HD", "PG", "JNJ", "NFLX",
+    "ABBV", "CRM", "BAC", "CVX", "MRK", "KO", "AMD", "WMT", "PEP", "ACN",
+    "TMO", "LIN", "CSCO", "MCD", "ABT", "ADBE", "DHR", "WFC", "TXN", "PM",
+    "NEE", "AMGN", "ORCL", "IBM", "GE", "CAT", "ISRG", "INTU", "VZ", "SPY",
+]
+
+
 def get_sp500_symbols() -> list[str]:
-    """Fetch current S&P 500 symbol list from Wikipedia via pandas."""
-    try:
-        url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-        req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        html = urlopen(req).read()
-        table = pd.read_html(html)
-        df = table[0]
-        symbols = df["Symbol"].str.replace(".", "-", regex=False).tolist()
-        logger.info(f"Fetched {len(symbols)} S&P 500 symbols")
-        return symbols
-    except Exception as e:
-        logger.error(f"Failed to fetch S&P 500 list: {e}")
-        return settings.CUSTOM_SYMBOLS
+    """Return top S&P 500 symbols."""
+    logger.info(f"Using {len(SP500_TOP50)} built-in S&P 500 symbols")
+    return SP500_TOP50
 
 
 def get_stock_universe() -> list[str]:
