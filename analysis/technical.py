@@ -1,5 +1,9 @@
+import numpy as np
 import pandas as pd
-import pandas_ta as ta
+from ta.momentum import RSIIndicator
+from ta.trend import MACD, EMAIndicator, SMAIndicator
+from ta.volatility import AverageTrueRange, BollingerBands
+from ta.volume import VolumeWeightedAveragePrice
 
 from utils.logger import logger
 
@@ -15,35 +19,47 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = [c.lower() for c in df.columns]
 
     # RSI (14)
-    df["rsi"] = ta.rsi(df["close"], length=14)
+    rsi = RSIIndicator(close=df["close"], window=14)
+    df["rsi"] = rsi.rsi()
 
     # MACD
-    macd = ta.macd(df["close"])
-    if macd is not None:
-        df = pd.concat([df, macd], axis=1)
+    macd = MACD(close=df["close"])
+    df["MACD_12_26_9"] = macd.macd()
+    df["MACDs_12_26_9"] = macd.macd_signal()
+    df["MACDh_12_26_9"] = macd.macd_diff()
 
     # EMA (9 and 21)
-    df["ema_9"] = ta.ema(df["close"], length=9)
-    df["ema_21"] = ta.ema(df["close"], length=21)
+    df["ema_9"] = EMAIndicator(close=df["close"], window=9).ema_indicator()
+    df["ema_21"] = EMAIndicator(close=df["close"], window=21).ema_indicator()
 
     # VWAP (requires high, low, close, volume)
     if all(col in df.columns for col in ["high", "low", "close", "volume"]):
-        vwap = ta.vwap(df["high"], df["low"], df["close"], df["volume"])
-        if vwap is not None:
-            df["vwap"] = vwap
+        try:
+            vwap = VolumeWeightedAveragePrice(
+                high=df["high"], low=df["low"], close=df["close"], volume=df["volume"]
+            )
+            df["vwap"] = vwap.volume_weighted_average_price()
+        except Exception:
+            pass
 
     # ATR (14)
-    atr = ta.atr(df["high"], df["low"], df["close"], length=14)
-    if atr is not None:
-        df["atr"] = atr
+    try:
+        atr = AverageTrueRange(high=df["high"], low=df["low"], close=df["close"], window=14)
+        df["atr"] = atr.average_true_range()
+    except Exception:
+        pass
 
     # Bollinger Bands
-    bbands = ta.bbands(df["close"], length=20)
-    if bbands is not None:
-        df = pd.concat([df, bbands], axis=1)
+    try:
+        bb = BollingerBands(close=df["close"], window=20)
+        df["BBL_20_2.0"] = bb.bollinger_lband()
+        df["BBM_20_2.0"] = bb.bollinger_mavg()
+        df["BBU_20_2.0"] = bb.bollinger_hband()
+    except Exception:
+        pass
 
     # Volume SMA (20-day average)
-    df["vol_sma_20"] = ta.sma(df["volume"], length=20)
+    df["vol_sma_20"] = SMAIndicator(close=df["volume"].astype(float), window=20).sma_indicator()
 
     logger.debug(f"Calculated indicators, columns: {list(df.columns)}")
     return df
@@ -52,7 +68,7 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
 def detect_orb_signal(df: pd.DataFrame, orb_period: int = 15) -> dict | None:
     """
     Detect Opening Range Breakout.
-    Uses the first `orb_period` minutes of data to define the range,
+    Uses the first `orb_period` candles to define the range,
     then checks if the latest candle breaks above/below.
 
     Returns: {"signal": "buy"/"sell", "orb_high": float, "orb_low": float} or None
