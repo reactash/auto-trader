@@ -1,0 +1,15 @@
+[Unit]
+Description=Auto-Trader Streamlit Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/auto-trader
+ExecStart=/home/ubuntu/auto-trader/venv/bin/python -m streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

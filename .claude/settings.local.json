@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:kite.trade)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:zerodha.com)",
+      "WebFetch(domain:newsapi.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:finshots.in)",
+      "WebFetch(domain:smartapi.angelbroking.com)",
+      "WebFetch(domain:alpaca.markets)",
+      "WebFetch(domain:www.interactivebrokers.com)",
+      "WebFetch(domain:docs.alpaca.markets)",
+      "WebFetch(domain:www.interactivebrokers.co.in)",
+      "WebFetch(domain:tradier.com)",
+      "WebFetch(domain:www.etoro.com)",
+      "WebFetch(domain:www.trading212.com)",
+      "WebFetch(domain:www.webull.com)",
+      "WebFetch(domain:stockmock.in)",
+      "WebFetch(domain:neostox.com)",
+      "WebFetch(domain:www.tradingview.com)",
+      "Bash(pip install:*)",
+      "Bash(python:*)"
+    ]
+  }
+}

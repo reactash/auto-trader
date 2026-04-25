@@ -1,0 +1,32 @@
+services:
+  # Trading Bot - Background Worker
+  - type: worker
+    name: auto-trader-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: ALPACA_API_KEY
+        sync: false
+      - key: ALPACA_SECRET_KEY
+        sync: false
+      - key: ALPACA_BASE_URL
+        value: https://paper-api.alpaca.markets
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+  # Streamlit Dashboard - Web Service
+  - type: web
+    name: auto-trader-dashboard
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m streamlit run dashboard/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: ALPACA_API_KEY
+        sync: false
+      - key: ALPACA_SECRET_KEY
+        sync: false
+      - key: ALPACA_BASE_URL
+        value: https://paper-api.alpaca.markets
+      - key: PYTHONUNBUFFERED
+        value: "1"
